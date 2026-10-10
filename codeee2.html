@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IT Help Desk</title>
+</head>
+<body>
+
+    <h2>IT Help Desk</h2>
+
+    <h3>Submit a Ticket</h3>
+
+    <label>Name:</label>
+    <input type="text" id="name">
+    <br><br>
+
+    <label>Room:</label>
+    <input type="text" id="room">
+    <br><br>
+
+    <label>Issue:</label>
+    <select id="issue">
+        <option>Computer broken (Hardware)</option>
+        <option>No Internet (Network)</option>
+        <option>App not opening (Software)</option>
+    </select>
+    <br><br>
+
+    <label>Description:</label>
+    <textarea id="description"></textarea>
+    <br><br>
+
+    <label>Priority:</label>
+    <select id="priority">
+        <option>High</option>
+        <option selected>Medium</option>
+        <option>Low</option>
+    </select>
+    <br><br>
+
+    <button onclick="addTicket()">Submit Ticket</button>
+
+    <h3>Tickets List</h3>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Room</th>
+                <th>Name</th>
+                <th>Issue</th>
+                <th>Description</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Technician</th>
+                <th>Resolution</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="ticketList">
+        </tbody>
+    </table>
+
+    <script>
+        var technicians = ["Alex", "Sarah", "Marcus"];
+        var editingRow = null;
+
+        function addTicket() {
+
+            var name = document.getElementById("name").value;
+            var room = document.getElementById("room").value;
+            var issue = document.getElementById("issue").value;
+            var description = document.getElementById("description").value;
+            var priority = document.getElementById("priority").value;
+
+            if (name == "" || room == "" || description == "") {
+                alert("Please fill in all fields!");
+                return;
+            }
+
+            if (editingRow != null) {
+
+                editingRow.cells[0].textContent = room;
+                editingRow.cells[1].textContent = name;
+                editingRow.cells[2].textContent = issue;
+                editingRow.cells[3].textContent = description;
+                editingRow.cells[4].textContent = priority;
+
+                editingRow = null;
+                alert("Ticket Updated!");
+
+            } else {
+
+                var table = document.getElementById("ticketList");
+                var row = table.insertRow();
+
+                row.insertCell().textContent = room;
+                row.insertCell().textContent = name;
+                row.insertCell().textContent = issue;
+                row.insertCell().textContent = description;
+                row.insertCell().textContent = priority;
+                row.insertCell().textContent = "Open";
+
+                var tech = technicians[
+                    Math.floor(Math.random() * technicians.length)
+                ];
+
+                row.insertCell().textContent = tech;
+                row.insertCell().textContent = "Pending";
+
+                var action = row.insertCell();
+
+                var editButton = document.createElement("button");
+                editButton.textContent = "Edit";
+                editButton.onclick = function() {
+                    editTicket(row);
+                };
+
+                var deleteButton = document.createElement("button");
+                deleteButton.textContent = "Delete";
+                deleteButton.onclick = function() {
+                    deleteTicket(row);
+                };
+
+                action.appendChild(editButton);
+                action.appendChild(deleteButton);
+
+                alert("Ticket Submitted! Technician: " + tech);
+            }
+
+            clearForm();
+        }
+
+        function editTicket(row) {
+
+            editingRow = row;
+
+            document.getElementById("room").value = row.cells[0].textContent;
+            document.getElementById("name").value = row.cells[1].textContent;
+            document.getElementById("issue").value = row.cells[2].textContent;
+            document.getElementById("description").value = row.cells[3].textContent;
+            document.getElementById("priority").value = row.cells[4].textContent;
+        }
+
+        function deleteTicket(row) {
+
+            if (confirm("Delete this ticket?")) {
+                if (editingRow == row) {
+                    editingRow = null;
+                    clearForm();
+                }
+
+                row.remove();
+                alert("Ticket Deleted!");
+            }
+        }
+
+        function clearForm() {
+
+            document.getElementById("name").value = "";
+            document.getElementById("room").value = "";
+            document.getElementById("issue").selectedIndex = 0;
+            document.getElementById("description").value = "";
+            document.getElementById("priority").value = "Medium";
+        }
+    </script>
+
+</body>
+</html>
